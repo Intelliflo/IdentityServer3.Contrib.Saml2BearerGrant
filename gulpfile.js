@@ -12,6 +12,7 @@ var msbuild = require("gulp-msbuild");
 var projectSettings = require("./gulpfile.config.js");
 var assign = require("object-assign-deep");
 var util = require("gulp-util");
+var mkdirp = require('mkdirp');
 
 //var xeditor = require("gulp-xml-editor");
 var xmlEdit = require('gulp-edit-xml');
@@ -20,35 +21,63 @@ var nunit = require('gulp-nunit-runner');
 var del = require('del');
 var url = require('url');
 
-// constants 
-
-// build default settings, takes a required parameter microservice
-var defaultsSettings = function(microservice, projectSettings){
+// build default settings, takes a required parameter projectName
+var defaultSettings = function(projectName, projectSettings){
 	var configuration = 'Debug';
-	var getMsBuildBinFolder = function (configuration) { return sprintf('%s/bin/%s', microservice, configuration);};
+	var getMsBuildBinFolder = function (configuration) { return sprintf('%s/bin/%s', projectName, configuration);};
 	return 	{
-		microservice : microservice,
+		projectName : projectName,
 		dbprofile: 'subsys',
 		msbuild : {
 			configuration : configuration
 		},
 		paths : {
-			solutionFile : "./" + microservice + ".sln",
+			solutionFile : "./src/" + projectName + ".sln",
 			binFolder : getMsBuildBinFolder(configuration),
-			binFile : sprintf('%s/%s.exe', getMsBuildBinFolder(configuration), microservice),
+			binFile : sprintf('%s/%s.exe', getMsBuildBinFolder(configuration), projectName),
 		},
 		nunit: {
 			'package': 'NUnit.Runners',
 			'version': '2.6.4',
 			unitTestAssemblies: sprintf('**/bin/%s/**/*.Tests.dll', configuration),
 		},
-		};
-}(projectSettings.microservice, projectSettings); // pass microservice name from gulp config as microservice name
+		nuget : {
+			version : '0.0.1',
+			packageName : projectName,
+			path : 'nuget',
+			spec : function(s) {return sprintf ('%s.nuspec', s.nuget.packageName);},
+			nupkgFile : function(s) {return sprintf('%s/%s.%s.nupkg', s.nuget.nupkgFolder(s), s.nuget.packageName, s.nuget.version);},
+			nupkgFolder : function(s) {return sprintf('packages');},
+			source : '', // use custom nuget source if needed. Include -s option here '-s http://nuget.org'
+			auth : {
+				ApiKey : projectSettings.NugetApiKey,
+			}
+		}
+	};
+}('IdentityServer3.Saml2Bearer', projectSettings); // pass projectName name from gulp config as projectName name
 
-// update settings with any manually assigned value from gulp config.
-var settings = assign(defaultsSettings, projectSettings);
+var settings = defaultSettings;
 
-// helper function to dump objects properties and valeus
+
+
+// Creating packages folder for nuget
+mkdirp(settings.nuget.nupkgFolder(settings, function (err) {
+    if (err) console.error(err)
+    else console.log('pow!');
+}));
+
+gulp.task('nuget-pack', shell.task([
+	sprintf('nuget pack %s -OutputDirectory %s -Version %s', settings.nuget.spec(settings), settings.nuget.nupkgFolder(settings), settings.nuget.version )
+]));
+
+gulp.task('nuget-push', shell.task([
+	sprintf('nuget push %s %s %s', settings.nuget.nupkgFile(settings), settings.nuget.auth.ApiKey, settings.nuget.source )
+]));
+
+
+
+
+// helper function to dump objects properties and values
 var dumpObject = function(o){
 	for(var propName in o) {
 		var propValue = o[propName]
@@ -90,16 +119,11 @@ gulp.task('restore-nunit-runner', shell.task([
 	sprintf('nuget install %s -OutputDirectory %s -source %s -Version %s', settings.nunit.package, 'packages', '"https://www.nuget.org/api/v2"', settings.nunit.version)
 ]));
 
-// calls 'nuget restore <microservice>.sln'
 gulp.task('nuget-restore', shell.task([
   sprintf('nuget restore %s', settings.paths.solutionFile)
 ]))
 
 gulp.task('build-clean', function(callback) {
-	//return gulp.src(sprintf('%s/*', binFolder))
-    //.pipe(vinylPaths(del))
-    //.pipe(gulp.dest('dist'));
-    //del(binFolder, callback);
 	callback(null);
 });
 

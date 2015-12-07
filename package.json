@@ -9,6 +9,7 @@
     "gulp-nunit-runner": "^0.4.3",
     "gulp-shell": "^0.5.1",
     "gulp-util": "^3.0.7",
+    "mkdirp": "^0.5.1",
     "object-assign": "^4.0.1",
     "object-assign-deep": "0.0.4",
     "require-dir": "^0.3.0",
