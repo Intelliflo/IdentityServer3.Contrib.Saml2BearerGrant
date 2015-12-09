@@ -53,7 +53,7 @@ var defaultSettings = function(projectName, projectSettings){
 			unitTestAssemblies: sprintf('**/bin/%s/**/*.Tests.dll', configuration),
 		},
 		nuget : {
-			version : '0.0.1',
+			version : '0.0.2',
 			packageName : projectName,
 			path : 'nuget',
 			spec : function(s) {return sprintf ('%s.nuspec', s.nuget.packageName);},
