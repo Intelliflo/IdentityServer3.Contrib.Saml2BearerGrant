@@ -43,11 +43,9 @@ namespace IdentityServer3.Saml2Bearer
 
             var samlResponse = LoadSamlAssertion(request);
 
-            //samlResponse.Subject.NameId.
             var claimsIdentities =_factory.TokenHandler.ValidateToken(samlResponse);
 
-            ClaimsPrincipal principal = new ClaimsPrincipal(claimsIdentities);
-                //null; // new ClaimsPrincipal(samlResponse.GetClaims(_options));
+            var principal = new ClaimsPrincipal(claimsIdentities);
             var subject = GetSubject(principal);
             if (subject == null)
             {
@@ -55,10 +53,8 @@ namespace IdentityServer3.Saml2Bearer
                 return new CustomGrantValidationResult("Subject claim not found in SAML2Bearer assertion");
             }
 
-            return new CustomGrantValidationResult(
-                subject.Value,
-                "custom",
-                principal.Claims);
+            return new CustomGrantValidationResult(subject.Value,
+                "custom", principal.Claims);
         }
 
         private Claim GetSubject(ClaimsPrincipal principal)
@@ -102,9 +98,5 @@ namespace IdentityServer3.Saml2Bearer
         {
             get { return "urn:ietf:params:oauth:grant-type:saml2-bearer"; }
         }
-    }
-
-    public class SubjectClaimNotFound : Exception
-    {
     }
 }

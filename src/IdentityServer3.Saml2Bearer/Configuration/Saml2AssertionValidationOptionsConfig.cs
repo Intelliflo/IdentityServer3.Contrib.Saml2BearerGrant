@@ -7,6 +7,7 @@ namespace IdentityServer3.Saml2Bearer.Configuration
 {
     public class Saml2AssertionValidationOptionsConfig : ConfigurationSection, ISaml2AssertionValidationOptions
     {
+        private Uri recipient;
         public const string SectionXPath = "Saml2AssertionValidationConfiguration";
 
         public static ISaml2AssertionValidationOptions GetSection()
@@ -18,11 +19,16 @@ namespace IdentityServer3.Saml2Bearer.Configuration
         }
 
         private const string RecipientKey = "Recipient";
-        [ConfigurationProperty(RecipientKey, IsRequired = true)]
+        [ConfigurationProperty(RecipientKey, IsRequired = false)]
         public virtual Uri Recipient
         {
-            get { return this[RecipientKey] as Uri; }
-            set { this[RecipientKey] = value; }
+            get
+            {
+                if (recipient == null)
+                    return this[RecipientKey] as Uri;
+                return recipient;
+            }
+            set { recipient = value; }
         }
 
         public IList<Uri> Audience
@@ -55,30 +61,5 @@ namespace IdentityServer3.Saml2Bearer.Configuration
         /// Set this manually
         /// </summary>
         public X509Certificate2 Certificate { get; set; }
-    }
-
-    public class UriElement : ConfigurationElement
-    {
-        private const string UriKey = "Uri";
-        [ConfigurationProperty(UriKey, IsKey = true, IsRequired = true)]
-        public Uri Uri
-        {
-            get { return new Uri(base[UriKey].ToString()); }
-            set { base[UriKey] = value; }
-        }
-    }
-
-
-    public class AudienceElementCollection : ConfigurationElementCollection
-    {
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new UriElement();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((UriElement)element).Uri;
-        }
     }
 }

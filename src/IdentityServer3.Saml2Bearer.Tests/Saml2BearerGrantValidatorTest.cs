@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IdentityModel.Metadata;
+using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel.Security;
 using System.Threading.Tasks;
 using IdentityServer3.Core.Extensions;
 using IdentityServer3.Core.Logging;
@@ -32,10 +34,8 @@ namespace IdentityServer3.Saml2Bearer.Tests
         private ISaml2AssertionFactory factory;
         private ISaml2AssertionSerializer serializer;
 
-        private IOptions options;
-        private SPOptions spOptions;
-        private X509Certificate2 certificate = TestCertificates.Idsrv3Test;
-        private X509Certificate2 certificate2 = TestCertificates.KentorAuthServices;
+        private X509Certificate2 certificate = TestCertificates.Default;
+        private X509Certificate2 certificate2 = TestCertificates.Idsrc3Test;
 
         [TestFixtureSetUp]
         public void FixtureSetUp()
@@ -50,29 +50,16 @@ namespace IdentityServer3.Saml2Bearer.Tests
             {
                 Certificate = certificate,
                 Recipient = new Uri("http://allowed_recipient1"),
-                Audience = new List<Uri>() { new Uri("http://audience") }
+                Audience = new List<Uri>() { new Uri("http://audience") },
             };
             factory = new Saml2AssertionFactory(options);
+            factory.TokenHandler.Configuration.CertificateValidator = X509CertificateValidator.None;
             serializer = new Saml2AssertionSerializer();
 
             userService = Substitute.For<IUserService>();
 
             underTest = new Saml2BearerGrantValidator(userService, factory);
             Saml2BearerGrantValidator.Log = log.Object;
-        }
-
-        private IdentityProvider Idp()
-        {
-            var spOptions = CreateSPOptions();
-            var idp = new IdentityProvider(new EntityId("http://localhost:52071/Metadata"), spOptions)
-            {
-                AllowUnsolicitedAuthnResponse = true,
-                Binding = Saml2BindingType.HttpRedirect,
-                SingleSignOnServiceUrl = new Uri("http://stubidp.kentor.se")
-            };
-
-            idp.SigningKeys.AddConfiguredItem(certificate.PublicKey.Key);
-            return idp;
         }
 
         [Test]
@@ -377,6 +364,7 @@ namespace IdentityServer3.Saml2Bearer.Tests
 
             var assertion = NewAssertion(x509Certificate2, id);
             return assertion;
+            //return new Saml2Response(spOptions.EntityId, certificate, new Uri("http://localhost:2020"), null, id);
         }
 
         private Saml2Assertion NewAssertion(X509Certificate2 x509Certificate2 = null, ClaimsIdentity id = null)

@@ -12,7 +12,7 @@ namespace IdentityServer3.Saml2Bearer
 {
     public class Saml2AssertionFactory : ISaml2AssertionFactory
     {
-        Saml2SecurityTokenHandler tokenHandlers;
+        Saml2SecurityTokenHandler tokenHandler;
         private SecurityTokenHandlerConfiguration configuration;
 
         public Saml2AssertionFactory(ISaml2AssertionValidationOptions options)
@@ -24,14 +24,14 @@ namespace IdentityServer3.Saml2Bearer
             if (options.Certificate == null)
                 throw new ArgumentNullException("certificate");
             configuration = GetSecurityTokenHandlerConfiguration(options);
-            tokenHandlers = new Saml2BearerGrantSecurityTokenHandler(options.Recipient);
-            tokenHandlers.Configuration = configuration;
+            tokenHandler = new Saml2BearerGrantSecurityTokenHandler(options.Recipient);
+            tokenHandler.Configuration = configuration;
         }
 
         public Saml2SecurityTokenHandler TokenHandler
         {
-            get { return tokenHandlers; }
-            set { tokenHandlers = value; }
+            get { return tokenHandler; }
+            set { tokenHandler = value; }
         }
 
         public Saml2SecurityToken ToSecurityToken(string xml)
@@ -39,10 +39,10 @@ namespace IdentityServer3.Saml2Bearer
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xml);
             var tokenReader = new XmlNodeReader(xmlDoc); // XML document with root element <saml:EncryptedAssertion ....
-            if (!tokenHandlers.CanReadToken(tokenReader))
+            if (!tokenHandler.CanReadToken(tokenReader))
                 throw new Exception("Unreadable token");
 
-            var token = tokenHandlers.ReadToken(tokenReader);
+            var token = tokenHandler.ReadToken(tokenReader);
             return token as Saml2SecurityToken;
         }
 
@@ -54,10 +54,10 @@ namespace IdentityServer3.Saml2Bearer
             var issuers = new ConfigurationBasedIssuerNameRegistry();
             issuers.AddTrustedIssuer(options.Certificate.Thumbprint, options.Certificate.Issuer);
 
-            var configuration = new SecurityTokenHandlerConfiguration
+            var conf = new SecurityTokenHandlerConfiguration
             {
                 AudienceRestriction = new AudienceRestriction(AudienceUriMode.Always),
-                CertificateValidationMode = X509CertificateValidationMode.None,
+                CertificateValidator = X509CertificateValidator.ChainTrust,
                 RevocationMode = X509RevocationMode.NoCheck,
                 IssuerNameRegistry = issuers,
                 MaxClockSkew = TimeSpan.FromMinutes(5),
@@ -66,9 +66,9 @@ namespace IdentityServer3.Saml2Bearer
             };
             foreach (var y in options.Audience)
             {
-                configuration.AudienceRestriction.AllowedAudienceUris.Add(y);
+                conf.AudienceRestriction.AllowedAudienceUris.Add(y);
             }
-            return configuration;
+            return conf;
         }
     }
 }

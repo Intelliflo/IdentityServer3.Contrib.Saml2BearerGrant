@@ -60,15 +60,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CertificateNotFoundException.cs" />
+    <Compile Include="Configuration\AudienceElementCollection.cs" />
     <Compile Include="Configuration\Saml2AssertionValidationOptionsConfig.cs" />
+    <Compile Include="Configuration\UriElement.cs" />
     <Compile Include="ISaml2AssertionFactory.cs" />
+    <Compile Include="ISaml2AssertionSerializer.cs" />
     <Compile Include="ISaml2AssertionValidationOptions.cs" />
+    <Compile Include="Saml2AssertionSerializer.cs" />
     <Compile Include="Saml2BearerGrantSecurityTokenHandler.cs" />
     <Compile Include="Saml2AssertionFactory.cs" />
     <Compile Include="Saml2BearerGrantValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SamlAssertionFormatException.cs" />
     <Compile Include="Base64UrlExtensions.cs" />
+    <Compile Include="SubjectClaimNotFound.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

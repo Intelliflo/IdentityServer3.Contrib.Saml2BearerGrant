@@ -11,7 +11,7 @@ namespace IdentityServer3.Saml2Bearer.Tests
     {
         private Saml2AssertionFactory underTest;
         private Saml2AssertionSerializer serializer;
-        X509Certificate2 certificate = TestCertificates.Idsrv3Test;
+        X509Certificate2 certificate = TestCertificates.Default;
         static string Generated = "yyyy-MM-ddTHH:mm:ss.fffZ";
 
         [SetUp]
@@ -37,7 +37,32 @@ namespace IdentityServer3.Saml2Bearer.Tests
             var serialized = serializer.ToXml(assertion);
 
             // Then
-            Assert.That(serialized, Is.StringContaining(certificate.SubjectName.Name));
+            var expected = GetExpected(assertion);
+            Assert.That(expected, Is.Not.Empty);
+            Assert.That(serialized.Substring(0, expected.Length), Is.EqualTo(expected));
+        }
+
+        private string GetExpected(Saml2Assertion assertion)
+        {
+            return string.Format(@"
+<Assertion ID=""{0}"" IssueInstant=""{1}"" Version=""2.0"" xmlns=""urn:oasis:names:tc:SAML:2.0:assertion"">
+    <Issuer>{2}</Issuer>
+    <Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
+    <SignedInfo>
+    <CanonicalizationMethod Algorithm=""http://www.w3.org/2001/10/xml-exc-c14n#"" />
+    <SignatureMethod Algorithm=""http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"" />
+    <Reference URI=""#{0}"">
+    <Transforms>
+    <Transform Algorithm=""http://www.w3.org/2000/09/xmldsig#enveloped-signature"" />
+        <Transform Algorithm=""http://www.w3.org/2001/10/xml-exc-c14n#"" />
+        </Transforms>
+        <DigestMethod Algorithm=""http://www.w3.org/2001/04/xmlenc#sha256"" />
+",
+                assertion.Id.Value, assertion.IssueInstant.ToUniversalTime().ToString(Generated),
+                certificate.IssuerName.Name
+                )
+                .RemoveNewLineSymbols()
+                .RemoveXmlIndentation();
         }
 
         [Test]

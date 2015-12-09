@@ -21,13 +21,11 @@ namespace IdentityServer3.Saml2Bearer
 
         protected override void ValidateConfirmationData(Saml2SubjectConfirmationData confirmationData)
         {
-            //confirmationData.Recipient.AbsolutePath 
-            //base.ValidateConfirmationData(confirmationData);
         }
 
         public override ReadOnlyCollection<ClaimsIdentity> ValidateToken(SecurityToken token)
         {
-            Saml2SecurityToken samlToken = token as Saml2SecurityToken;
+            var samlToken = token as Saml2SecurityToken;
             ValidateMethod(samlToken.Assertion);
             var claimsIdentities = base.ValidateToken(token);
             ValidateAssertion(samlToken.Assertion);
@@ -60,15 +58,6 @@ namespace IdentityServer3.Saml2Bearer
         private void ValidateNotOnOrAfter(Saml2Assertion assertion)
         {
             DateTime now = DateTime.UtcNow;
-            /*
-            if (assertion.Conditions!=null && assertion.Conditions.NotOnOrAfter != null)
-            {
-                var conditionValue = assertion.Conditions.NotOnOrAfter + Configuration.MaxClockSkew.Negate();
-                if (conditionValue < now)
-                    throw new SecurityTokenExpiredException(string.Format("Message=NotOnOrAfter invalid on Conditions, NotOnOrAfter={0}, now={1}", conditionValue, now));
-                return;
-            }
-            */
             if (assertion.Subject.SubjectConfirmations[0].SubjectConfirmationData.NotOnOrAfter == null)
                 throw new SecurityTokenExpiredException(string.Format("Message=NotOnOrAfter is missing"));
 
