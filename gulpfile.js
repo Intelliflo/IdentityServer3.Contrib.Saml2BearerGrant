@@ -9,17 +9,28 @@ var exec = require('child_process').exec;
 var shell = require('gulp-shell')
 var sprintf = require("sprintf-js").sprintf;
 var msbuild = require("gulp-msbuild");
-var projectSettings = require("./gulpfile.config.js");
 var assign = require("object-assign-deep");
 var util = require("gulp-util");
 var mkdirp = require('mkdirp');
-
-//var xeditor = require("gulp-xml-editor");
-var xmlEdit = require('gulp-edit-xml');
+var fs = require('fs');
 
 var nunit = require('gulp-nunit-runner');
 var del = require('del');
 var url = require('url');
+
+var RequireOrCreateEmpty = function(filePath) {
+	
+	try {
+		fs.lstatSync(filePath);
+	}
+	catch (e) {
+		// file does not exist
+		fs.writeFileSync(filePath, 'module.exports = {NugetApiKey : "<your nuget API key"};');
+	}
+	return require(filePath);
+}
+var projectSettings = RequireOrCreateEmpty("./gulpfile.config.js")
+
 
 // build default settings, takes a required parameter projectName
 var defaultSettings = function(projectName, projectSettings){
