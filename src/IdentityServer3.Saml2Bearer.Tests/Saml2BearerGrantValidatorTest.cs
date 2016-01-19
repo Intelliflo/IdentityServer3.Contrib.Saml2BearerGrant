@@ -14,10 +14,6 @@ using IdentityServer3.Core.Extensions;
 using IdentityServer3.Core.Logging;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Core.Validation;
-using Kentor.AuthServices;
-using Kentor.AuthServices.Configuration;
-using Kentor.AuthServices.Metadata;
-using Kentor.AuthServices.WebSso;
 using Moq;
 using NSubstitute;
 using NUnit.Framework;
@@ -421,58 +417,6 @@ namespace IdentityServer3.Saml2Bearer.Tests
             };
             request.Raw["assertion"] = assertion;
             return request;
-        }
-
-        private static SPOptions CreateSPOptions()
-        {
-            var swedish = CultureInfo.GetCultureInfo("sv-se");
-
-            var organization = new Organization();
-            organization.Names.Add(new LocalizedName("Kentor", swedish));
-            organization.DisplayNames.Add(new LocalizedName("Kentor IT AB", swedish));
-            organization.Urls.Add(new LocalizedUri(new Uri("http://www.kentor.se"), swedish));
-
-            var spOptions = new SPOptions
-            {
-                EntityId = new EntityId("http://localhost:52071/Metadata"),
-                ReturnUrl = new Uri("http://localhost:57294/Account/ExternalLoginCallback"),
-                DiscoveryServiceUrl = new Uri("http://localhost:52071/DiscoveryService"),
-                Organization = organization
-            };
-
-            var techContact = new ContactPerson
-            {
-                Type = ContactType.Technical
-            };
-            techContact.EmailAddresses.Add("authservices@example.com");
-            spOptions.Contacts.Add(techContact);
-
-            var supportContact = new ContactPerson
-            {
-                Type = ContactType.Support
-            };
-            supportContact.EmailAddresses.Add("support@example.com");
-            spOptions.Contacts.Add(supportContact);
-
-            var attributeConsumingService = new AttributeConsumingService("AuthServices")
-            {
-                IsDefault = true,
-            };
-
-            attributeConsumingService.RequestedAttributes.Add(
-                new RequestedAttribute("urn:someName")
-                {
-                    FriendlyName = "Some Name",
-                    IsRequired = true,
-                    NameFormat = RequestedAttribute.AttributeNameFormatUri
-                });
-
-            attributeConsumingService.RequestedAttributes.Add(
-                new RequestedAttribute("Minimal"));
-
-            spOptions.AttributeConsumingServices.Add(attributeConsumingService);
-
-            return spOptions;
         }
     }
 }
