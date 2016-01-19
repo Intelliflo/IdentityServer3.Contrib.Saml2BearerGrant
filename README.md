@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/pydv6e98tv6agp10/branch/master?svg=true)](https://ci.appveyor.com/project/dariusdamalakas/identityserver3-saml2bearergrant/branch/master)
+
 # IdentityServer3.Saml2BearerGrant
 
 A package for addin SAML2BearerGrant support for [IdentityServer3](https://github.com/IdentityServer/IdentityServer3).
