@@ -67,6 +67,7 @@
     <Compile Include="ISaml2AssertionSerializer.cs" />
     <Compile Include="ISaml2AssertionValidationOptions.cs" />
     <Compile Include="Saml2AssertionSerializer.cs" />
+    <Compile Include="Saml2AssertionValidationOptions.cs" />
     <Compile Include="Saml2BearerGrantSecurityTokenHandler.cs" />
     <Compile Include="Saml2AssertionFactory.cs" />
     <Compile Include="Saml2BearerGrantValidator.cs" />

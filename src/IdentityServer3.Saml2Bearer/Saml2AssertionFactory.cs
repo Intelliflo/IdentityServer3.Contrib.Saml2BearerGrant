@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
-using System.IO;
 using System.Security.Cryptography.X509Certificates;
-using System.ServiceModel.Security;
-using System.Text;
 using System.Xml;
 
 namespace IdentityServer3.Saml2Bearer
@@ -24,7 +21,7 @@ namespace IdentityServer3.Saml2Bearer
             if (options.Certificate == null)
                 throw new ArgumentNullException("certificate");
             configuration = GetSecurityTokenHandlerConfiguration(options);
-            tokenHandler = new Saml2BearerGrantSecurityTokenHandler(options.Recipient);
+            tokenHandler = options.Saml2SecurityTokenHandlerFactory(options);
             tokenHandler.Configuration = configuration;
         }
 
