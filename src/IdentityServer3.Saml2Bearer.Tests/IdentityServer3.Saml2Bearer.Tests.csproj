@@ -67,6 +67,7 @@
     <Compile Include="Base64UrlExtensionsTest.cs" />
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="Saml2AssertionFactoryTest.cs" />
+    <Compile Include="Saml2BearerGrantValidatorExtensionsTest.cs" />
     <Compile Include="Saml2BearerGrantValidatorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtensions.cs" />

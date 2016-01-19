@@ -5,13 +5,21 @@ using System.Security.Claims;
 
 namespace IdentityServer3.Saml2Bearer
 {
+    /// <summary>
+    /// Default SAML2SecurityTokenHandler
+    /// </summary>
     public class Saml2BearerGrantSecurityTokenHandler : Saml2SecurityTokenHandler
     {
-        private Uri allowedRecipient;
+        private readonly Uri allowedRecipient;
 
-        public Saml2BearerGrantSecurityTokenHandler(Uri allowedRecipient)
+        public Saml2BearerGrantSecurityTokenHandler(ISaml2AssertionValidationOptions validationOptions,
+            SamlSecurityTokenRequirement samlSecurityTokenRequirement) : base(samlSecurityTokenRequirement)
         {
-            this.allowedRecipient = allowedRecipient;
+            this.allowedRecipient = validationOptions.Recipient;
+        }
+
+        public Saml2BearerGrantSecurityTokenHandler(ISaml2AssertionValidationOptions validationOptions) : this(validationOptions, new SamlSecurityTokenRequirement())
+        {
         }
 
         static class ConfirmationMethods

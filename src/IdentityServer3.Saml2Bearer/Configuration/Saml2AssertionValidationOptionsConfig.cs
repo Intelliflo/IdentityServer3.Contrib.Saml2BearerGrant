@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
 
 namespace IdentityServer3.Saml2Bearer.Configuration
@@ -9,6 +10,11 @@ namespace IdentityServer3.Saml2Bearer.Configuration
     {
         private Uri recipient;
         public const string SectionXPath = "Saml2AssertionValidationConfiguration";
+
+        public Saml2AssertionValidationOptionsConfig()
+        {
+            Saml2SecurityTokenHandlerFactory = c => new Saml2BearerGrantSecurityTokenHandler(c);
+        }
 
         public static ISaml2AssertionValidationOptions GetSection()
         {
@@ -61,5 +67,7 @@ namespace IdentityServer3.Saml2Bearer.Configuration
         /// Set this manually
         /// </summary>
         public X509Certificate2 Certificate { get; set; }
+
+        public Func<ISaml2AssertionValidationOptions, Saml2SecurityTokenHandler> Saml2SecurityTokenHandlerFactory { get; set;}
     }
 }

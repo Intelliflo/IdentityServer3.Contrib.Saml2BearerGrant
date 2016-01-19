@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
 
 namespace IdentityServer3.Saml2Bearer
@@ -24,12 +25,10 @@ namespace IdentityServer3.Saml2Bearer
         /// Certificate to verify token signature
         /// </summary>
         X509Certificate2 Certificate { get; set; }
-    }
 
-    public class Saml2AssertionValidationOptions : ISaml2AssertionValidationOptions
-    {
-        public Uri Recipient { get; set; }
-        public IList<Uri> Audience { get; set; }
-        public X509Certificate2 Certificate { get; set; }
+        /// <summary>
+        /// Override this to specify custom <see cref="Saml2SecurityTokenHandler"/> implementations.
+        /// </summary>
+        Func<ISaml2AssertionValidationOptions, Saml2SecurityTokenHandler> Saml2SecurityTokenHandlerFactory { get; set; }
     }
 }
