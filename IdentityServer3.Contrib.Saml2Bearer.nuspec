@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>IdentityServer3.Contrib.Saml2Bearer</id>
+        <version>0.0.1</version>
+        <authors>Darius Damalakas</authors>
+        <owners>Darius Damalakas</owners>
+        <projectUrl>https://github.com/Intelliflo/IdentityServer3.Contrib.Saml2BearerGrant</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Saml2BearerGrant for IdentityServer3</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright 2016</copyright>
+        <tags>IdentityServer3 Saml</tags>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
+        </frameworkAssemblies>
+    </metadata>
+    <files>
+        <file src="src/IdentityServer3.Contrib.Saml2Bearer/bin/Debug/IdentityServer3.Contrib.Saml2Bearer.dll" target="lib/net40/IdentityServer3.Contrib.Saml2Bearer.dll" />
+    </files>
+</package>

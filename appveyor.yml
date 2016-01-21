@@ -1,0 +1,5 @@
+version: 1.0.{build}
+before_build:
+- cmd: nuget restore src\IdentityServer3.Contrib.Saml2Bearer.sln
+build:
+  verbosity: minimal

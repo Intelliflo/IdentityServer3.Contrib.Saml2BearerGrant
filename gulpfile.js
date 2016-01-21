@@ -53,7 +53,7 @@ var defaultSettings = function(projectName, projectSettings){
 			unitTestAssemblies: sprintf('**/bin/%s/**/*.Tests.dll', configuration),
 		},
 		nuget : {
-			version : '0.0.2',
+			version : '0.0.4',
 			packageName : projectName,
 			path : 'nuget',
 			spec : function(s) {return sprintf ('%s.nuspec', s.nuget.packageName);},
@@ -65,7 +65,7 @@ var defaultSettings = function(projectName, projectSettings){
 			}
 		}
 	};
-}('IdentityServer3.Saml2Bearer', projectSettings); // pass projectName name from gulp config as projectName name
+}('IdentityServer3.Contrib.Saml2Bearer', projectSettings); // pass projectName name from gulp config as projectName name
 
 var settings = defaultSettings;
 
